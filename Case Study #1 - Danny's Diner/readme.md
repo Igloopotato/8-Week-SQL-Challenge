@@ -45,7 +45,25 @@ OUTPUT:
 | A           | 76          |
 
 
-2. ow many days has each customer visited the restaurant?
+**2. How many days has each customer visited the restaurant?**
+
+INPUT:
+```sql
+SELECT
+	customer_id,
+	COUNT(DISTINCT order_date) AS day_come
+FROM dannys_diner.sales
+GROUP BY customer_id;
+```
+
+OUTPUT:
+
+| customer_id | day_come |
+| ----------- | -------- |
+| A           | 4        |
+| B           | 6        |
+| C           | 2        |
+
 3. What was the first item from the menu purchased by each customer?
 4. What is the most purchased item on the menu and how many times was it purchased by all customers?
 5. Which item was the most popular for each customer?
