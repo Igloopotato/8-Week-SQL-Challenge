@@ -23,7 +23,28 @@ He intends to utilise these insights to inform his decision about whether to exp
 
 ## Questions and Answers
 
-1. What is the total amount each customer spent at the restaurant?
+**1. What is the total amount each customer spent at the restaurant?**
+
+INPUT:
+```sql
+SELECT 
+	customer_id ,
+    SUM(price) AS total_price 
+FROM dannys_diner.sales 
+JOIN dannys_diner.menu
+	ON dannys_diner.sales.product_id = dannys_diner.menu.product_id 
+GROUP BY sales.customer_id;
+```
+
+OUTPUT:
+
+| customer_id | total_price |
+| ----------- | ----------- |
+| B           | 74          |
+| C           | 36          |
+| A           | 76          |
+
+
 2. ow many days has each customer visited the restaurant?
 3. What was the first item from the menu purchased by each customer?
 4. What is the most purchased item on the menu and how many times was it purchased by all customers?
