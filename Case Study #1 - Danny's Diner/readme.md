@@ -65,6 +65,7 @@ OUTPUT:
 | C           | 2        |
 
 3. What was the first item from the menu purchased by each customer?
+
 INPUT:
 ```sql
 WITH new_table_cte AS (
