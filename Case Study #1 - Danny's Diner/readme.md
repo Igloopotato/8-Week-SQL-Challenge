@@ -67,7 +67,8 @@ OUTPUT:
 3. What was the first item from the menu purchased by each customer?
 INPUT:
 ```sql
-SELECT 
+WITH new_table_cte AS (
+  SELECT 
     sales.customer_id, 
     sales.order_date, 
     menu.product_name,
@@ -78,9 +79,13 @@ SELECT
     ON sales.product_id = menu.product_id
 )
 
-SELECT customer_id, GROUP_CONCAT(product_name) AS first_buy FROM new_table_cte
-WHERE rank_food=1
+SELECT 
+  customer_id, 
+  STRING_AGG(DISTINCT product_name, ',') AS first_buy 
+FROM new_table_cte
+WHERE rank_food = 1
 GROUP BY customer_id;
+
 ```
 OUTPUT:
 | customer_id | first_buy    |
