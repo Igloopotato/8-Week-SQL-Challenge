@@ -65,10 +65,35 @@ OUTPUT:
 | C           | 2        |
 
 3. What was the first item from the menu purchased by each customer?
-4. What is the most purchased item on the menu and how many times was it purchased by all customers?
-5. Which item was the most popular for each customer?
-6. Which item was purchased first by the customer after they became a member?
-7. Which item was purchased just before the customer became a member?
-8. What is the total items and amount spent for each member before they became a member?
-9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
-10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
+INPUT:
+```sql
+SELECT 
+    sales.customer_id, 
+    sales.order_date, 
+    menu.product_name,
+    DENSE_RANK() OVER (PARTITION BY sales.customer_id 
+      ORDER BY sales.order_date) AS rank_food
+  FROM dannys_diner.sales
+  INNER JOIN dannys_diner.menu
+    ON sales.product_id = menu.product_id
+)
+
+SELECT customer_id, GROUP_CONCAT(product_name) AS first_buy FROM new_table_cte
+WHERE rank_food=1
+GROUP BY customer_id;
+```
+OUTPUT:
+ customer_id |   first_buy   
+------------+---------------
+ A          | sushi,curry
+ B          | curry
+ C          | ramen
+
+
+5. What is the most purchased item on the menu and how many times was it purchased by all customers?
+6. Which item was the most popular for each customer?
+7. Which item was purchased first by the customer after they became a member?
+8. Which item was purchased just before the customer became a member?
+9. What is the total items and amount spent for each member before they became a member?
+10. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
+11. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
