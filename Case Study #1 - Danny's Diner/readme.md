@@ -83,11 +83,11 @@ WHERE rank_food=1
 GROUP BY customer_id;
 ```
 OUTPUT:
- customer_id |   first_buy   
-------------+---------------
- A          | sushi,curry
- B          | curry
- C          | ramen
+| customer_id | first_buy    |
+| ----------- | --------     |
+| A           | sushi,curry  |
+| B           | curry        |
+| C           | ramen        | 
 
 
 5. What is the most purchased item on the menu and how many times was it purchased by all customers?
