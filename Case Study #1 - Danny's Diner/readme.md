@@ -95,6 +95,7 @@ OUTPUT:
 
 
 **4. What is the most purchased item on the menu and how many times was it purchased by all customers?**
+
 INPUT:
 ```sql
 SELECT product_name, COUNT(dannys_diner.sales.product_id) AS number_purchased from dannys_diner.sales INNER JOIN dannys_diner.menu ON dannys_diner.sales.product_id = dannys_diner.menu.product_id
