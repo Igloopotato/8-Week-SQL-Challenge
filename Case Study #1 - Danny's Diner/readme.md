@@ -16,9 +16,9 @@ He intends to utilise these insights to inform his decision about whether to exp
 
 ## Datasets used
 
--The sales table captures all customer_id level purchases with an corresponding order_date and product_id information for when and what menu items were ordered.
--The menu table maps the product_id to the actual product_name and price of each menu item.
--The final members table captures the join_date when a customer_id joined the beta version of the Danny’s Diner loyalty program.
+- The sales table captures all customer_id level purchases with an corresponding order_date and product_id information for when and what menu items were ordered.
+- The menu table maps the product_id to the actual product_name and price of each menu item.
+- The final members table captures the join_date when a customer_id joined the beta version of the Danny’s Diner loyalty program.
 
 ## Entity Relationship Diagram
 ![ERD](https://github.com/marswanttobeanalyst/8-Week-SQL-Challenge/assets/141108687/8a65c7f6-eac8-4731-86d4-a5135d728581)
