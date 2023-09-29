@@ -187,6 +187,30 @@ OUTPUT:
 | A           | 2021-01-01T00:00:00.000Z | sushi,curry       |
 | B           | 2021-01-04T00:00:00.000Z | sushi             |
 
-8. What is the total items and amount spent for each member before they became a member?
-9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
-10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
+**8. What is the total items and amount spent for each member before they became a member?**
+
+INPUT:
+```sql
+WITH new_table AS
+ (
+ SELECT members.customer_id, sales.product_id, order_date,
+ ROW_NUMBER() OVER (PARTITION BY members.customer_id ORDER BY sales.order_date) AS row_num
+ FROM dannys_diner.members
+ INNER JOIN dannys_diner.sales ON members.customer_id = sales.customer_id
+ AND sales.order_date < members.join_date
+  )
+
+SELECT new_table.customer_id, COUNT(new_table.product_id) AS total_items, SUM(price) AS total_spent  FROM new_table INNER JOIN dannys_diner.menu ON new_table.product_id = menu.product_id
+GROUP BY new_table.customer_id
+ORDER BY new_table.customer_id;
+```
+OUTPUT:
+
+| customer_id | total_items | total_spent |
+| ----------- | ----------- | ----------- |
+| A           | 2           | 25          |
+| B           | 3           | 40          |
+
+
+10. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
+11. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
