@@ -212,5 +212,30 @@ OUTPUT:
 | B           | 3           | 40          |
 
 
-10. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
+**9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?**
+
+There are two scenario that I will think of for this where first scenario where points counted even when they not the member yet and second scenario where point counted only after they become member.
+
+__FIRST SCENARIO:__
+
+INPUT:
+```sql
+SELECT customer_id, SUM
+     (CASE WHEN product_name = 'sushi'  THEN price*20
+      ELSE price*10
+     END) AS points      
+      FROM dannys_diner.sales JOIN dannys_diner.menu ON
+     dannys_diner.sales.product_id = dannys_diner.menu.product_id
+     GROUP BY customer_id
+     ORDER BY customer_id
+```
+
+OUTPUT:
+
+| customer_id | points |
+| ----------- | ------ |
+| A           | 860    |
+| B           | 940    |
+| C           | 360    |
+
 11. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
