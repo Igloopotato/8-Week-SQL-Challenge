@@ -8,12 +8,14 @@ Danny has a severe love for Japanese cuisine, so in the beginning of 2021 he mak
 Danny's Diner is in need of your aid to stay in business. Although they have collected some very basic data over the course of their short time in company, they are unsure of how to use it.
 
 ## Problem Statement
+
 Danny wants to use the information to get basic answers about his consumers, particularly regarding their spending habits, frequency of visits, and favourite menu items. He will be able to give his devoted consumers a better and more individualised experience thanks to this stronger relationship with them.
 
 He intends to utilise these insights to inform his decision about whether to expand the current customer loyalty programme. He also needs assistance in creating some simple datasets so his team can quickly examine the data without the need for SQL.
 
 
 ## Datasets used
+
 -The sales table captures all customer_id level purchases with an corresponding order_date and product_id information for when and what menu items were ordered.
 -The menu table maps the product_id to the actual product_name and price of each menu item.
 -The final members table captures the join_date when a customer_id joined the beta version of the Danny’s Diner loyalty program.
