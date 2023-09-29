@@ -218,7 +218,7 @@ OUTPUT:
 
 There are two scenario that I will think of for this where first scenario where points counted even when they not the member yet and second scenario where point counted only after they become member.
 
-__FIRST SCENARIO:__
+__a) FIRST SCENARIO:__
 
 INPUT:
 ```sql
@@ -239,5 +239,27 @@ OUTPUT:
 | A           | 860    |
 | B           | 940    |
 | C           | 360    |
+
+__b) SCENARIO 2:__
+
+INPUT:
+```sql
+WITH new_table AS
+ (
+SELECT members.customer_id, order_date, product_id FROM dannys_diner.sales INNER JOIN dannys_diner.members ON sales.customer_id = members.customer_id AND order_date >= join_date 
+ )
+
+SELECT customer_id, SUM(CASE WHEN product_name = 'sushi' THEN price*20 ELSE price*10 END) FROM new_table INNER JOIN dannys_diner.menu ON new_table.product_id = dannys_diner.menu.product_id
+GROUP BY customer_id
+ORDER BY customer_id
+;
+```
+
+OUTPUT:
+| customer_id | sum |
+| ----------- | --- |
+| A           | 510 |
+| B           | 440 |
+
 
 11. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
