@@ -161,7 +161,32 @@ OUTPUT:
 | B           | sushi        |
 
 
-7. Which item was purchased just before the customer became a member?
+**7. Which item was purchased just before the customer became a member?**
+
+INPUT:
+```sql
+WITH new_table AS
+ (
+ SELECT members.customer_id, sales.product_id, order_date,
+ DENSE_RANK() OVER (PARTITION BY members.customer_id ORDER BY sales.order_date DESC)  AS row_num
+ FROM dannys_diner.members
+ INNER JOIN dannys_diner.sales ON members.customer_id = sales.customer_id
+ AND sales.order_date < members.join_date
+  )
+
+SELECT customer_id, order_date, STRING_AGG(product_name, ',') AS product_purchased FROM new_table 
+INNER JOIN dannys_diner.menu ON new_table.product_id = menu.product_id
+WHERE row_num = 1
+GROUP BY customer_id, order_date
+ORDER BY customer_id;
+```
+
+OUTPUT:
+| customer_id | order_date               | product_purchased |
+| ----------- | ------------------------ | ----------------- |
+| A           | 2021-01-01T00:00:00.000Z | sushi,curry       |
+| B           | 2021-01-04T00:00:00.000Z | sushi             |
+
 8. What is the total items and amount spent for each member before they became a member?
 9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
 10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
