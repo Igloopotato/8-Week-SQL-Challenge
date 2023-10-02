@@ -4,11 +4,11 @@ This is the timeline of how I did all the sql challenge one by one
 
 Special thanks to [Katie Huang](https://www.linkedin.com/in/katiehuangx/) for inspiring me to try this challenge and special thanks to [Danny Ma](https://www.linkedin.com/in/datawithdanny/) for making this interactive challenge.
 
-You can try this challenge on [here](https://8weeksqlchallenge.com/)
+You can try this challenge on [here](https://8weeksqlchallenge.com/).
 
 I use PostgreSQL to solve this case study.
 
-enjoyyy
+enjoyyy!!!
 
 ## Table Of Contect
 
