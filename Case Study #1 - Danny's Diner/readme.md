@@ -262,4 +262,80 @@ OUTPUT:
 | B           | 440 |
 
 
-11. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
+**10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?**
+
+I really like this assumption made by [Katie Huang](https://www.linkedin.com/in/katiehuangx/)
+
+where
+
+-  On Day -X to Day 1 (the day a customer becomes a member), each $1 spent earns 10 points. However, for sushi, each $1 spent earns 20 points.
+-  From Day 1 to Day 7 (the first week of membership), each $1 spent for any items earns 20 points.
+-  From Day 8 to the last day of January 2021, each $1 spent earns 10 points. However, sushi continues to earn double the points at 20 points per $1 spent.
+
+__A) SCENARIO 1 (WHEN WE CONSIDER THAT THE POINTS WILL BE COUNTED FROM THE VERY FIRST PURCHASE INSTEAD OF WHEN THEY STARTED TO JOIN THE MEMBERSHIP)__
+
+INPUT: 
+```sql
+WITH date_cte AS 
+	(
+  	 SELECT
+      customer_id,
+      join_date,
+      join_date + INTERVAL '6 DAY' AS last_joined_date
+     FROM dannys_diner.members
+    )
+
+SELECT 
+ sales.customer_id, SUM( CASE 
+                        WHEN product_name = 'sushi'  THEN 2*10* price
+                        WHEN order_date BETWEEN join_date AND last_joined_date THEN 2*10*price
+                        ELSE 10*price
+                       END) AS points
+FROM dannys_diner.sales 
+INNER JOIN dannys_diner.menu ON dannys_diner.sales.product_id = dannys_diner.menu.product_id
+INNER JOIN date_cte ON dannys_diner.sales.customer_id = date_cte.customer_id
+AND order_date <='2021-01-31'
+GROUP BY sales.customer_id;
+```
+
+OUTPUT:
+
+| customer_id | points |
+| ----------- | ------ |
+| A           | 1370   |
+| B           | 820    |
+
+__B) SCENARIO 2 (WHEN WE CONSIDER THAT THE POINTS ONLY BE COUNTED WHEN THEY STARTED TO JOIN THE MEMBERSHIP)__
+
+INPUT: 
+```sql
+WITH date_cte AS 
+	(
+  	 SELECT
+      customer_id,
+      join_date,
+      join_date + INTERVAL '6 DAY' AS last_joined_date
+     FROM dannys_diner.members
+    )
+
+SELECT 
+ sales.customer_id, SUM( CASE 
+                        WHEN product_name = 'sushi'  THEN 2*10* price
+                        WHEN order_date BETWEEN join_date AND last_joined_date THEN 2*10*price
+                        ELSE 10*price
+                       END) AS points
+FROM dannys_diner.sales 
+INNER JOIN dannys_diner.menu ON dannys_diner.sales.product_id = dannys_diner.menu.product_id
+INNER JOIN date_cte ON dannys_diner.sales.customer_id = date_cte.customer_id
+AND order_date >= join_date 
+AND order_date <='2021-01-31'
+GROUP BY sales.customer_id
+ORDER BY sales.customer_id;
+```
+
+OUTPUT:
+
+| customer_id | points |
+| ----------- | ------ |
+| A           | 1020   |
+| B           | 320    |
