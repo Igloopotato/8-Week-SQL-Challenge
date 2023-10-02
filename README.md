@@ -7,7 +7,7 @@ You can try this challenge on [here](https://8weeksqlchallenge.com/)
 
 ## Table Of Contect
 
-1. [Case Study #1 - Danny's Diner](Case%Study%1/readme.md)
+1. [Case Study #1 - Danny's Diner](https://github.com/marswanttobeanalyst/8-Week-SQL-Challenge/blob/main/Case%20Study%20%231%20-%20Danny's%20Diner/readme.md)
 3. Case Study #2 - Pizza Runner
 4. Case Study #3 - Foodie-Fi
 5. Case Study #4 - Data Bank
