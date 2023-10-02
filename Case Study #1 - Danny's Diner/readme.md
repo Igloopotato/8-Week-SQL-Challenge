@@ -72,7 +72,7 @@ ___
 
 INPUT:
 ```sql
-WITH new_table_cte AS (
+WITH sales_cte AS (
   SELECT 
     sales.customer_id, 
     sales.order_date, 
@@ -87,7 +87,7 @@ WITH new_table_cte AS (
 SELECT 
   customer_id, 
   STRING_AGG(DISTINCT product_name, ',') AS first_buy 
-FROM new_table_cte
+FROM sales_cte
 WHERE rank_food = 1
 GROUP BY customer_id;
 ```
@@ -129,7 +129,7 @@ ___
 
 INPUT:
 ```sql
-WITH new_table AS 
+WITH sales_cte AS 
 	(
      SELECT
 	customer_id, product_name, COUNT(dannys_diner.sales.product_id) AS number_purchased, 
@@ -145,7 +145,7 @@ SELECT
   customer_id,
   STRING_AGG(DISTINCT product_name, ',') AS most_buy,
   MAX(number_purchased) as most_purchased
-FROM new_table
+FROM sales_cte
 WHERE rank = 1
 GROUP BY customer_id;
 ```
@@ -164,7 +164,7 @@ ___
 
 INPUT:
 ```sql
-WITH new_table AS
+WITH members_cte AS
  (
  SELECT
    members.customer_id, sales.product_id, order_date,
@@ -177,7 +177,7 @@ WITH new_table AS
 
 SELECT
   customer_id, menu.product_name, order_date
-FROM new_table
+FROM members_cte
 INNER JOIN dannys_diner.menu
   ON new_table.product_id = menu.product_id
 WHERE row_num = 1
@@ -197,7 +197,7 @@ ___
 
 INPUT:
 ```sql
-WITH new_table AS
+WITH members_cte AS
  (
  SELECT
    members.customer_id, sales.product_id, order_date,
@@ -211,7 +211,7 @@ WITH new_table AS
 SELECT
   customer_id, order_date,
   STRING_AGG(product_name, ',') AS product_purchased
-FROM new_table 
+FROM members_cte
 INNER JOIN dannys_diner.menu
   ON new_table.product_id = menu.product_id
 WHERE row_num = 1
@@ -232,7 +232,7 @@ ___
 
 INPUT:
 ```sql
-WITH new_table AS
+WITH members_cte AS
  (
  SELECT
    members.customer_id, sales.product_id, order_date,
@@ -247,7 +247,7 @@ SELECT
   new_table.customer_id,
   COUNT(new_table.product_id) AS total_items,
   SUM(price) AS total_spent
-FROM new_table
+FROM members_cte
 INNER JOIN dannys_diner.menu
   ON new_table.product_id = menu.product_id
 GROUP BY new_table.customer_id
@@ -303,7 +303,7 @@ OUTPUT:
 
 INPUT:
 ```sql
-WITH new_table AS
+WITH sales_cte AS
  (
   SELECT
     members.customer_id, order_date, product_id
@@ -319,7 +319,7 @@ SELECT
     (CASE
     WHEN product_name = 'sushi' THEN price*20
     ELSE price*10 END)
-FROM new_table
+FROM sales_cte
 INNER JOIN dannys_diner.menu
   ON new_table.product_id = dannys_diner.menu.product_id
 GROUP BY customer_id
