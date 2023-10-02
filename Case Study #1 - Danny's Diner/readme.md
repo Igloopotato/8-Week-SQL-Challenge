@@ -30,11 +30,10 @@ He intends to utilise these insights to inform his decision about whether to exp
 INPUT:
 ```sql
 SELECT 
-	customer_id ,
-    SUM(price) AS total_price 
-FROM dannys_diner.sales 
-JOIN dannys_diner.menu
-	ON dannys_diner.sales.product_id = dannys_diner.menu.product_id 
+    customer_id,
+    SUM(price) AS total_price
+FROM  dannys_diner.sales
+JOIN  dannys_diner.menu ON dannys_diner.sales.product_id = dannys_diner.menu.product_id
 GROUP BY sales.customer_id;
 ```
 
@@ -74,7 +73,7 @@ WITH new_table_cte AS (
     sales.order_date, 
     menu.product_name,
     DENSE_RANK() OVER (PARTITION BY sales.customer_id 
-      ORDER BY sales.order_date) AS rank_food
+    ORDER BY sales.order_date) AS rank_food
   FROM dannys_diner.sales
   INNER JOIN dannys_diner.menu
     ON sales.product_id = menu.product_id
@@ -86,8 +85,8 @@ SELECT
 FROM new_table_cte
 WHERE rank_food = 1
 GROUP BY customer_id;
-
 ```
+
 OUTPUT:
 | customer_id | first_buy    |
 | ----------- | --------     |
@@ -100,7 +99,12 @@ OUTPUT:
 
 INPUT:
 ```sql
-SELECT product_name, COUNT(dannys_diner.sales.product_id) AS number_purchased from dannys_diner.sales INNER JOIN dannys_diner.menu ON dannys_diner.sales.product_id = dannys_diner.menu.product_id
+SELECT
+  product_name,
+  COUNT(dannys_diner.sales.product_id) AS number_purchased
+FROM dannys_diner.sales INNER
+JOIN dannys_diner.menu
+  ON dannys_diner.sales.product_id = dannys_diner.menu.product_id
 GROUP BY product_name
 ORDER by number_purchased DESC
 LIMIT 1;
@@ -117,15 +121,21 @@ INPUT:
 ```sql
 WITH new_table AS 
 	(
-     SELECT customer_id, product_name, COUNT(dannys_diner.sales.product_id) AS number_purchased, 
-     DENSE_RANK() OVER (PARTITION BY sales.customer_id ORDER BY COUNT(dannys_diner.sales.product_id) DESC) AS rank
-     FROM dannys_diner.sales INNER JOIN dannys_diner.menu
-     ON dannys_diner.sales.product_id = dannys_diner.menu.product_id
-	 GROUP BY customer_id, product_name
+     SELECT
+	customer_id, product_name, COUNT(dannys_diner.sales.product_id) AS number_purchased, 
+        DENSE_RANK() OVER (PARTITION BY sales.customer_id ORDER BY COUNT(dannys_diner.sales.product_id) DESC) AS rank
+     FROM dannys_diner.sales
+     INNER JOIN dannys_diner.menu
+        ON dannys_diner.sales.product_id = dannys_diner.menu.product_id
+     GROUP BY customer_id, product_name
      ORDER BY customer_id, number_purchased
     )
 
-SELECT customer_id, STRING_AGG(DISTINCT product_name, ',') AS most_buy, MAX(number_purchased) as most_purchased FROM new_table
+SELECT
+  customer_id,
+  STRING_AGG(DISTINCT product_name, ',') AS most_buy,
+  MAX(number_purchased) as most_purchased
+FROM new_table
 WHERE rank = 1
 GROUP BY customer_id;
 ```
@@ -144,14 +154,20 @@ INPUT:
 ```sql
 WITH new_table AS
  (
- SELECT members.customer_id, sales.product_id, order_date,
- ROW_NUMBER() OVER (PARTITION BY members.customer_id ORDER BY sales.order_date) AS row_num
+ SELECT
+   members.customer_id, sales.product_id, order_date,
+   ROW_NUMBER() OVER (PARTITION BY members.customer_id ORDER BY sales.order_date) AS row_num
  FROM dannys_diner.members
- INNER JOIN dannys_diner.sales ON members.customer_id = sales.customer_id
- AND sales.order_date >= members.join_date
+ INNER JOIN dannys_diner.sales
+   ON members.customer_id = sales.customer_id
+   AND sales.order_date >= members.join_date
   )
 
-SELECT customer_id, menu.product_name, order_date FROM new_table INNER JOIN dannys_diner.menu ON new_table.product_id = menu.product_id
+SELECT
+  customer_id, menu.product_name, order_date
+FROM new_table
+INNER JOIN dannys_diner.menu
+  ON new_table.product_id = menu.product_id
 WHERE row_num = 1
 ORDER BY customer_id;
 ```
@@ -169,15 +185,21 @@ INPUT:
 ```sql
 WITH new_table AS
  (
- SELECT members.customer_id, sales.product_id, order_date,
- DENSE_RANK() OVER (PARTITION BY members.customer_id ORDER BY sales.order_date DESC)  AS row_num
+ SELECT
+   members.customer_id, sales.product_id, order_date,
+   DENSE_RANK() OVER (PARTITION BY members.customer_id ORDER BY sales.order_date DESC)  AS row_num
  FROM dannys_diner.members
- INNER JOIN dannys_diner.sales ON members.customer_id = sales.customer_id
- AND sales.order_date < members.join_date
-  )
+ INNER JOIN dannys_diner.sales
+   ON members.customer_id = sales.customer_id
+   AND sales.order_date < members.join_date
+ )
 
-SELECT customer_id, order_date, STRING_AGG(product_name, ',') AS product_purchased FROM new_table 
-INNER JOIN dannys_diner.menu ON new_table.product_id = menu.product_id
+SELECT
+  customer_id, order_date,
+  STRING_AGG(product_name, ',') AS product_purchased
+FROM new_table 
+INNER JOIN dannys_diner.menu
+  ON new_table.product_id = menu.product_id
 WHERE row_num = 1
 GROUP BY customer_id, order_date
 ORDER BY customer_id;
@@ -195,17 +217,26 @@ INPUT:
 ```sql
 WITH new_table AS
  (
- SELECT members.customer_id, sales.product_id, order_date,
- ROW_NUMBER() OVER (PARTITION BY members.customer_id ORDER BY sales.order_date) AS row_num
+ SELECT
+   members.customer_id, sales.product_id, order_date,
+   ROW_NUMBER() OVER (PARTITION BY members.customer_id ORDER BY sales.order_date) AS row_num
  FROM dannys_diner.members
- INNER JOIN dannys_diner.sales ON members.customer_id = sales.customer_id
- AND sales.order_date < members.join_date
-  )
+ INNER JOIN dannys_diner.sales
+   ON members.customer_id = sales.customer_id
+   AND sales.order_date < members.join_date
+ )
 
-SELECT new_table.customer_id, COUNT(new_table.product_id) AS total_items, SUM(price) AS total_spent  FROM new_table INNER JOIN dannys_diner.menu ON new_table.product_id = menu.product_id
+SELECT
+  new_table.customer_id,
+  COUNT(new_table.product_id) AS total_items,
+  SUM(price) AS total_spent
+FROM new_table
+INNER JOIN dannys_diner.menu
+  ON new_table.product_id = menu.product_id
 GROUP BY new_table.customer_id
 ORDER BY new_table.customer_id;
 ```
+
 OUTPUT:
 
 | customer_id | total_items | total_spent |
@@ -218,18 +249,22 @@ OUTPUT:
 
 There are two scenario that I will think of for this where first scenario where points counted even when they not the member yet and second scenario where point counted only after they become member.
 
-__a) FIRST SCENARIO:__
+__A) SCENARIO 1 (WHEN WE CONSIDER THAT THE POINTS WILL BE COUNTED FROM THE VERY FIRST PURCHASE INSTEAD OF WHEN THEY STARTED TO JOIN THE MEMBERSHIP)__
 
 INPUT:
 ```sql
-SELECT customer_id, SUM
-     (CASE WHEN product_name = 'sushi'  THEN price*20
-      ELSE price*10
+SELECT
+  customer_id,
+  SUM
+     (CASE
+     WHEN product_name = 'sushi'  THEN price*20
+     ELSE price*10
      END) AS points      
-      FROM dannys_diner.sales JOIN dannys_diner.menu ON
-     dannys_diner.sales.product_id = dannys_diner.menu.product_id
-     GROUP BY customer_id
-     ORDER BY customer_id
+  FROM dannys_diner.sales
+  JOIN dannys_diner.menu
+     ON dannys_diner.sales.product_id = dannys_diner.menu.product_id
+  GROUP BY customer_id
+  ORDER BY customer_id
 ```
 
 OUTPUT:
@@ -240,19 +275,31 @@ OUTPUT:
 | B           | 940    |
 | C           | 360    |
 
-__b) SCENARIO 2:__
+__B) SCENARIO 2 (WHEN WE CONSIDER THAT THE POINTS ONLY BE COUNTED WHEN THEY STARTED TO JOIN THE MEMBERSHIP)__
 
 INPUT:
 ```sql
 WITH new_table AS
  (
-SELECT members.customer_id, order_date, product_id FROM dannys_diner.sales INNER JOIN dannys_diner.members ON sales.customer_id = members.customer_id AND order_date >= join_date 
+  SELECT
+    members.customer_id, order_date, product_id
+  FROM dannys_diner.sales
+  INNER JOIN dannys_diner.members
+    ON sales.customer_id = members.customer_id
+    AND order_date >= join_date 
  )
 
-SELECT customer_id, SUM(CASE WHEN product_name = 'sushi' THEN price*20 ELSE price*10 END) FROM new_table INNER JOIN dannys_diner.menu ON new_table.product_id = dannys_diner.menu.product_id
+SELECT
+  customer_id,
+  SUM
+    (CASE
+    WHEN product_name = 'sushi' THEN price*20
+    ELSE price*10 END)
+FROM new_table
+INNER JOIN dannys_diner.menu
+  ON new_table.product_id = dannys_diner.menu.product_id
 GROUP BY customer_id
-ORDER BY customer_id
-;
+ORDER BY customer_id;
 ```
 
 OUTPUT:
@@ -272,29 +319,33 @@ where
 -  From Day 1 to Day 7 (the first week of membership), each $1 spent for any items earns 20 points.
 -  From Day 8 to the last day of January 2021, each $1 spent earns 10 points. However, sushi continues to earn double the points at 20 points per $1 spent.
 
+Hence, I decided to make two scenario out of this as well.
+
 __A) SCENARIO 1 (WHEN WE CONSIDER THAT THE POINTS WILL BE COUNTED FROM THE VERY FIRST PURCHASE INSTEAD OF WHEN THEY STARTED TO JOIN THE MEMBERSHIP)__
 
 INPUT: 
 ```sql
 WITH date_cte AS 
-	(
-  	 SELECT
-      customer_id,
-      join_date,
-      join_date + INTERVAL '6 DAY' AS last_joined_date
-     FROM dannys_diner.members
-    )
+  (
+   SELECT
+     customer_id, join_date,
+     join_date + INTERVAL '6 DAY' AS last_joined_date
+   FROM dannys_diner.members
+  )
 
 SELECT 
- sales.customer_id, SUM( CASE 
-                        WHEN product_name = 'sushi'  THEN 2*10* price
-                        WHEN order_date BETWEEN join_date AND last_joined_date THEN 2*10*price
-                        ELSE 10*price
-                       END) AS points
+ sales.customer_id,
+ SUM
+  (CASE 
+  WHEN product_name = 'sushi'  THEN 2*10* price
+  WHEN order_date BETWEEN join_date AND last_joined_date THEN 2*10*price
+  ELSE 10*price END) AS points
 FROM dannys_diner.sales 
-INNER JOIN dannys_diner.menu ON dannys_diner.sales.product_id = dannys_diner.menu.product_id
-INNER JOIN date_cte ON dannys_diner.sales.customer_id = date_cte.customer_id
-AND order_date <='2021-01-31'
+INNER JOIN dannys_diner.menu
+  ON dannys_diner.sales.product_id = dannys_diner.menu.product_id
+INNER JOIN date_cte
+  ON dannys_diner.sales.customer_id = date_cte.customer_id
+  AND order_date <='2021-01-31'
 GROUP BY sales.customer_id;
 ```
 
@@ -310,25 +361,27 @@ __B) SCENARIO 2 (WHEN WE CONSIDER THAT THE POINTS ONLY BE COUNTED WHEN THEY STAR
 INPUT: 
 ```sql
 WITH date_cte AS 
-	(
-  	 SELECT
-      customer_id,
-      join_date,
-      join_date + INTERVAL '6 DAY' AS last_joined_date
-     FROM dannys_diner.members
-    )
+  (
+   SELECT
+     customer_id, join_date,
+     join_date + INTERVAL '6 DAY' AS last_joined_date
+   FROM dannys_diner.members
+  )
 
 SELECT 
- sales.customer_id, SUM( CASE 
-                        WHEN product_name = 'sushi'  THEN 2*10* price
-                        WHEN order_date BETWEEN join_date AND last_joined_date THEN 2*10*price
-                        ELSE 10*price
-                       END) AS points
+ sales.customer_id,
+ SUM
+   (CASE 
+   WHEN product_name = 'sushi'  THEN 2*10* price
+   WHEN order_date BETWEEN join_date AND last_joined_date THEN 2*10*price
+   ELSE 10*price END) AS points
 FROM dannys_diner.sales 
-INNER JOIN dannys_diner.menu ON dannys_diner.sales.product_id = dannys_diner.menu.product_id
-INNER JOIN date_cte ON dannys_diner.sales.customer_id = date_cte.customer_id
-AND order_date >= join_date 
-AND order_date <='2021-01-31'
+INNER JOIN dannys_diner.menu
+  ON dannys_diner.sales.product_id = dannys_diner.menu.product_id
+INNER JOIN date_cte
+  ON dannys_diner.sales.customer_id = date_cte.customer_id
+  AND order_date >= join_date 
+  AND order_date <='2021-01-31'
 GROUP BY sales.customer_id
 ORDER BY sales.customer_id;
 ```
