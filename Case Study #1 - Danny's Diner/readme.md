@@ -45,7 +45,7 @@ OUTPUT:
 | A           | 76          |
 
 
-
+ ___
 
 **2. How many days has each customer visited the restaurant?**
 
@@ -66,7 +66,7 @@ OUTPUT:
 | C           | 2        |
 
 
-
+___
 
 **3. What was the first item from the menu purchased by each customer?**
 
@@ -100,7 +100,7 @@ OUTPUT:
 | C           | ramen        | 
 
 
-
+___
 
 **4. What is the most purchased item on the menu and how many times was it purchased by all customers?**
 
@@ -123,7 +123,7 @@ OUTPUT:
 | ramen        | 8                |
 
 
-
+___
 
 **5. Which item was the most popular for each customer?**
 
@@ -158,7 +158,7 @@ OUTPUT:
 | C           | ramen             | 3              |
 
 
-
+___
 
 **6. Which item was purchased first by the customer after they became a member?**
 
@@ -191,7 +191,7 @@ OUTPUT:
 | B           | sushi        |
 
 
-
+___
 
 **7. Which item was purchased just before the customer became a member?**
 
@@ -226,7 +226,7 @@ OUTPUT:
 | B           | 2021-01-04T00:00:00.000Z | sushi             |
 
 
-
+___
 
 **8. What is the total items and amount spent for each member before they became a member?**
 
@@ -262,7 +262,7 @@ OUTPUT:
 | B           | 3           | 40          |
 
 
-
+___
 
 **9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?**
 
@@ -328,21 +328,19 @@ OUTPUT:
 | B           | 440 |
 
 
-
+___
 
 **10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?**
 
 I really like this assumption made by [Katie Huang](https://www.linkedin.com/in/katiehuangx/)
 
-where
-
--  On Day -X to Day 1 (the day a customer becomes a member), each $1 spent earns 10 points. However, for sushi, each $1 spent earns 20 points.
--  From Day 1 to Day 7 (the first week of membership), each $1 spent for any items earns 20 points.
--  From Day 8 to the last day of January 2021, each $1 spent earns 10 points. However, sushi continues to earn double the points at 20 points per $1 spent.
+> -  On Day -X to Day 1 (the day a customer becomes a member), each $1 spent earns 10 points. However, for sushi, each $1 spent earns 20 points.
+> -  From Day 1 to Day 7 (the first week of membership), each $1 spent for any items earns 20 points.
+> -  From Day 8 to the last day of January 2021, each $1 spent earns 10 points. However, sushi continues to earn double the points at 20 points per $1 spent.
 
 Hence, I decided to make two scenario out of this as well.
 
-+ A) SCENARIO 1 (WHEN WE CONSIDER THAT THE POINTS WILL BE COUNTED FROM THE VERY FIRST PURCHASE INSTEAD OF WHEN THEY STARTED TO JOIN THE MEMBERSHIP)
++ ___A) SCENARIO 1 (WHEN WE CONSIDER THAT THE POINTS WILL BE COUNTED FROM THE VERY FIRST PURCHASE INSTEAD OF WHEN THEY STARTED TO JOIN THE MEMBERSHIP)___
 
 INPUT: 
 ```sql
@@ -377,7 +375,9 @@ OUTPUT:
 | A           | 1370   |
 | B           | 820    |
 
-+ B) SCENARIO 2 (WHEN WE CONSIDER THAT THE POINTS ONLY BE COUNTED WHEN THEY STARTED TO JOIN THE MEMBERSHIP)
+
+
++ ___B) SCENARIO 2 (WHEN WE CONSIDER THAT THE POINTS ONLY BE COUNTED WHEN THEY STARTED TO JOIN THE MEMBERSHIP)____
 
 INPUT: 
 ```sql
